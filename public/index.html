@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EXOT Downloader · MP4 · MP3 · WAV</title>
+  <meta name="description" content="Herramienta para descargar tu propio contenido de YouTube o contenido con permiso de descarga en formato MP4, MP3 o WAV." />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Fondo decorativo -->
+  <div class="bg-glow" aria-hidden="true"></div>
+
+  <main class="wrapper">
+    <section class="card" aria-labelledby="title">
+      <header class="card__header">
+        <div class="logo">
+          <span class="logo__dot"></span>
+          EXOT<span class="logo__accent">·</span>Downloader
+        </div>
+        <h1 id="title" class="card__title">Descarga tu contenido</h1>
+        <p class="card__subtitle">
+          Pega el enlace de YouTube y elige el formato. Pensado únicamente para
+          contenido propio o con permiso de descarga.
+        </p>
+      </header>
+
+      <!-- Campo de enlace -->
+      <div class="field">
+        <label class="field__label" for="urlInput">Enlace de YouTube</label>
+        <div class="input-group">
+          <svg class="input-group__icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M10 13a5 5 0 0 0 7.07 0l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M14 11a5 5 0 0 0-7.07 0l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input
+            id="urlInput"
+            type="url"
+            class="input-group__input"
+            placeholder="https://www.youtube.com/watch?v=..."
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </div>
+      </div>
+
+      <!-- Selección de formato -->
+      <div class="field">
+        <span class="field__label">Formato de salida</span>
+        <div class="formats" role="radiogroup" aria-label="Formato de descarga">
+          <button class="format" data-format="mp4" role="radio" aria-checked="false">
+            <span class="format__tag">MP4</span>
+            <span class="format__desc">Vídeo</span>
+          </button>
+          <button class="format" data-format="mp3" role="radio" aria-checked="false">
+            <span class="format__tag">MP3</span>
+            <span class="format__desc">Audio</span>
+          </button>
+          <button class="format" data-format="wav" role="radio" aria-checked="false">
+            <span class="format__tag">WAV</span>
+            <span class="format__desc">Audio HQ</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Acción principal -->
+      <button id="downloadBtn" class="btn-primary">
+        <span class="btn-primary__label">Preparar descarga</span>
+        <span class="btn-primary__spinner" aria-hidden="true"></span>
+      </button>
+
+      <!-- Mensajes de estado -->
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+
+      <footer class="card__footer">
+        <p>
+          Usa esta herramienta solo con contenido tuyo o que tengas permiso de
+          descargar. Respeta los derechos de autor y los Términos de cada plataforma.
+        </p>
+      </footer>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

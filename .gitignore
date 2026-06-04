@@ -1,0 +1,9 @@
+node_modules/
+node/
+*.log
+test-output.*
+
+# Artefactos del paquete "todo en uno" (se publican como Release, no en el codigo)
+*.zip
+EXOT-Downloader-FACIL/
+launcher/*.exe
