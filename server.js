@@ -29,6 +29,9 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "public")));
 
+// Marcador de version para saber que despliegue esta activo (diagnostico temporal).
+app.get("/api/version", (req, res) => res.json({ version: "debug-2" }));
+
 // Carpeta temporal donde se generan los archivos antes de enviarlos
 const TMP_DIR = path.join(os.tmpdir(), "exot-downloader");
 fs.mkdirSync(TMP_DIR, { recursive: true });
@@ -131,7 +134,7 @@ app.post("/api/download", async (req, res) => {
       userMsg = "YouTube ha bloqueado la descarga desde el servidor (protección anti-bot). " +
                 "Usa la versión de escritorio, o configura cookies en el servidor (ver README).";
     }
-    res.status(500).json({ error: userMsg });
+    res.status(500).json({ error: userMsg, detail: detail.slice(0, 900) });
   }
 });
 
