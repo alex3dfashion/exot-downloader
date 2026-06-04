@@ -90,6 +90,30 @@ exot-downloader/
 
 ---
 
+## 🔒 Si las descargas fallan en la nube (solución con cookies)
+
+En la nube, YouTube suele bloquear las descargas ("confirma que no eres un bot").
+El método fiable es darle al servidor unas **cookies** de una sesión de YouTube:
+
+1. En tu navegador (con sesión de YouTube iniciada), instala una extensión tipo
+   **"Get cookies.txt LOCALLY"** y exporta `cookies.txt` desde youtube.com.
+2. Conviértelo a base64. En **PowerShell (Windows)**:
+   ```powershell
+   [Convert]::ToBase64String([IO.File]::ReadAllBytes("cookies.txt")) | Set-Clipboard
+   ```
+   (queda copiado en el portapapeles).
+3. En **Render → tu servicio → Environment** añade una variable:
+   - **Key:** `COOKIES_B64`
+   - **Value:** *(pega el texto base64)*
+4. Guarda; Render volverá a desplegar y las descargas deberían funcionar.
+
+> ⚠️ Usa una cuenta de Google **secundaria/desechable**: las cookies de un servidor
+> público pueden hacer que YouTube limite o bloquee esa cuenta. Las cookies además
+> **caducan** cada cierto tiempo y hay que renovarlas. Por eso, para uso serio, la
+> **versión de escritorio** sigue siendo la más fiable.
+
+---
+
 ## 📄 Licencia
 
 [MIT](LICENSE) — © 2026 alex3dfashion. Software ofrecido "tal cual", sin garantías.

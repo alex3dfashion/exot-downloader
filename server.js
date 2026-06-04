@@ -33,6 +33,33 @@ app.use(express.static(path.join(__dirname, "public")));
 const TMP_DIR = path.join(os.tmpdir(), "exot-downloader");
 fs.mkdirSync(TMP_DIR, { recursive: true });
 
+// Cookies opcionales para evitar el bloqueo anti-bot de YouTube cuando la app
+// corre en un servidor. En Render: crea la variable de entorno COOKIES_B64 con
+// el contenido de un cookies.txt (de una sesion de YouTube) codificado en base64.
+let COOKIES_PATH = null;
+if (process.env.COOKIES_B64) {
+  try {
+    COOKIES_PATH = path.join(TMP_DIR, "cookies.txt");
+    fs.writeFileSync(COOKIES_PATH, Buffer.from(process.env.COOKIES_B64, "base64"));
+    console.log("  🍪 Cookies cargadas desde COOKIES_B64.");
+  } catch (e) {
+    console.error("No se pudieron cargar las cookies:", e.message);
+    COOKIES_PATH = null;
+  }
+}
+
+// Opciones comunes para yt-dlp: prueba varios "clientes" de YouTube (las apps de
+// movil/TV suelen estar menos bloqueadas desde la nube que el cliente web).
+function baseOptions() {
+  const o = {
+    ffmpegLocation: ffmpegPath,
+    noPlaylist: true,
+    extractorArgs: "youtube:player_client=android,ios,tv,web"
+  };
+  if (COOKIES_PATH) o.cookies = COOKIES_PATH;
+  return o;
+}
+
 // Validación básica de enlace de YouTube (también se valida en el frontend)
 function isValidYouTubeUrl(url) {
   return /^(https?:\/\/)?(www\.)?(youtube\.com\/(watch\?v=|shorts\/|embed\/)|youtu\.be\/)[\w-]{11}/i.test(url);
@@ -65,22 +92,20 @@ app.post("/api/download", async (req, res) => {
       // Vídeo: mejor calidad de vídeo + audio combinados en MP4
       finalPath = `${outBase}.mp4`;
       await youtubedl(url, {
+        ...baseOptions(),
         output: finalPath,
         format: "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-        mergeOutputFormat: "mp4",
-        ffmpegLocation: ffmpegPath,
-        noPlaylist: true
+        mergeOutputFormat: "mp4"
       });
     } else {
       // Audio: extraer y convertir a mp3 o wav
       finalPath = `${outBase}.${format}`;
       await youtubedl(url, {
+        ...baseOptions(),
         output: `${outBase}.%(ext)s`,
         extractAudio: true,
         audioFormat: format,          // "mp3" o "wav"
-        audioQuality: 0,              // mejor calidad
-        ffmpegLocation: ffmpegPath,
-        noPlaylist: true
+        audioQuality: 0               // mejor calidad
       });
     }
 
@@ -95,12 +120,18 @@ app.post("/api/download", async (req, res) => {
       if (err) console.error("Error enviando el archivo:", err.message);
     });
   } catch (err) {
-    console.error("Error procesando la descarga:", err.message);
+    const detail = (err.stderr || err.message || "").toString();
+    console.error("Error procesando la descarga:", detail);
     // Limpieza de posibles restos
     ["mp4", "mp3", "wav", "m4a", "webm"].forEach((ext) => {
       fs.unlink(`${outBase}.${ext}`, () => {});
     });
-    res.status(500).json({ error: "No se pudo procesar el enlace." });
+    let userMsg = "No se pudo procesar el enlace.";
+    if (/sign in to confirm|not a bot|confirm.+bot|cookies/i.test(detail)) {
+      userMsg = "YouTube ha bloqueado la descarga desde el servidor (protección anti-bot). " +
+                "Usa la versión de escritorio, o configura cookies en el servidor (ver README).";
+    }
+    res.status(500).json({ error: userMsg });
   }
 });
 
