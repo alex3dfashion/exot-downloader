@@ -9,7 +9,19 @@ anuncios, sin pop-ups y sin enviar nada a terceros.
 
 ---
 
-## 🌐 Opción rápida — Versión web (un enlace, sin instalar nada)
+## ⭐ Lo más fácil (Windows) — Instalador en 2 clics
+
+**[⬇️ Descargar el instalador (EXOT-Downloader-Instalar.exe)](https://github.com/alex3dfashion/exot-downloader/releases/latest/download/EXOT-Downloader-Instalar.exe)**
+
+1. Descarga y haz doble clic en el archivo.
+2. Si sale "Windows protegió su PC": **"Más información" → "Ejecutar de todas formas"** (solo la 1ª vez).
+3. Pulsa **Instalar**. Se crea un acceso directo en el Escritorio y se abre solo.
+
+Node va incluido, no pide administrador, y después abres siempre desde el acceso directo **sin más avisos**.
+
+---
+
+## 🌐 Opción alternativa — Versión web (un enlace, sin instalar nada)
 
 Desplegada en la nube: se abre con un enlace en cualquier dispositivo, sin descargas ni avisos.
 
