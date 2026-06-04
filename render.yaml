@@ -1,0 +1,16 @@
+# Despliegue en Render (https://render.com) - servidor web gratuito con URL publica.
+# Render leera este archivo automaticamente (Blueprint) al conectar el repo.
+services:
+  - type: web
+    name: exot-downloader
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: node server.js
+    healthCheckPath: /
+    envVars:
+      - key: NODE_VERSION
+        value: "22.11.0"
+      - key: YOUTUBE_DL_SKIP_PYTHON_CHECK
+        value: "1"

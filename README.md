@@ -9,6 +9,18 @@ anuncios, sin pop-ups y sin enviar nada a terceros.
 
 ---
 
+## 🌐 Opción rápida — Versión web (un enlace, sin instalar nada)
+
+Desplegada en la nube: se abre con un enlace en cualquier dispositivo, sin descargas ni avisos.
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/alex3dfashion/exot-downloader)
+
+> ⚠️ **Aviso de fiabilidad:** YouTube bloquea con frecuencia las descargas hechas desde
+> servidores en la nube (pide "confirmar que no eres un bot"). La web abrirá siempre, pero
+> **algunas descargas pueden fallar**. Para uso fiable, usa la versión de escritorio de abajo.
+
+---
+
 ## ⬇️ Opción 1 — Fácil (Windows, sin instalar nada)
 
 Pensada para cualquiera, aunque no sepa de programación.

@@ -4,6 +4,9 @@
   "description": "Descargador de YouTube (contenido propio o con permiso) en MP4, MP3 o WAV.",
   "type": "module",
   "main": "server.js",
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "start": "node server.js"
   },
