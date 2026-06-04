@@ -19,9 +19,30 @@ import os from "os";
 import crypto from "crypto";
 import youtubedl from "youtube-dl-exec";
 import ffmpegPath from "ffmpeg-static";
+import { execSync } from "child_process";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+/* IMPORTANTE: youtube-dl-exec lanza yt-dlp concatenando los argumentos sin
+   comillas (shell:true), por lo que una RUTA CON ESPACIOS (p. ej.
+   "C:\Users\Juan Perez\..." o "...\EXOT Downloader\...") se parte por el espacio
+   y yt-dlp no encuentra ffmpeg. Solucion: convertir esas rutas a su nombre
+   corto 8.3 de Windows (sin espacios) antes de pasarlas. */
+function toShortPath(p) {
+  if (process.platform !== "win32" || !p || !/\s/.test(p)) return p;
+  try {
+    const out = execSync(`for %I in ("${p}") do @echo %~sI`, {
+      encoding: "utf8",
+      windowsHide: true
+    }).trim();
+    const lines = out.split(/\r?\n/).filter(Boolean);
+    const short = lines[lines.length - 1];
+    return short && fs.existsSync(short) ? short : p;
+  } catch {
+    return p;
+  }
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -35,6 +56,11 @@ app.get("/api/version", (req, res) => res.json({ version: "debug-2" }));
 // Carpeta temporal donde se generan los archivos antes de enviarlos
 const TMP_DIR = path.join(os.tmpdir(), "exot-downloader");
 fs.mkdirSync(TMP_DIR, { recursive: true });
+// Version "sin espacios" de la carpeta temporal (para los archivos de salida).
+const OUT_DIR = toShortPath(TMP_DIR);
+
+// ffmpeg en formato de ruta corta (sin espacios) para que yt-dlp lo encuentre.
+const FFMPEG = toShortPath(ffmpegPath);
 
 // Cookies opcionales para evitar el bloqueo anti-bot de YouTube cuando la app
 // corre en un servidor. En Render: crea la variable de entorno COOKIES_B64 con
@@ -55,7 +81,7 @@ if (process.env.COOKIES_B64) {
 // movil/TV suelen estar menos bloqueadas desde la nube que el cliente web).
 function baseOptions() {
   const o = {
-    ffmpegLocation: ffmpegPath,
+    ffmpegLocation: FFMPEG,
     noPlaylist: true,
     extractorArgs: "youtube:player_client=android,ios,tv,web"
   };
@@ -86,7 +112,7 @@ app.post("/api/download", async (req, res) => {
   }
 
   const id = crypto.randomBytes(6).toString("hex");
-  const outBase = path.join(TMP_DIR, id);
+  const outBase = path.join(OUT_DIR, id);
 
   try {
     let finalPath;
